@@ -3,6 +3,7 @@ package panuwat.restaurant;
 
 import java.text.DecimalFormat;
 import java.util.Vector;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -19,6 +20,9 @@ public class form extends javax.swing.JFrame {
             //create comma
             DecimalFormat df = new DecimalFormat("#,###.00");
             
+            //keep rows used by user
+            int selected;
+            
                
     /**
      * Creates new form form
@@ -28,6 +32,16 @@ public class form extends javax.swing.JFrame {
         textField1.setText(price[0]);
         model = (DefaultTableModel)tb.getModel();
     }
+    
+     public boolean checkMenu(){
+         for(int i=0;i<tb.getRowCount();i++){
+             if(cbFoods.getSelectedItem().toString().equals(tb.getValueAt(i,0)));
+             System.out.println("Dupilcated order");
+             return true;
+             
+         }
+         return false;
+     }
     
 
     @SuppressWarnings("unchecked")
@@ -94,6 +108,11 @@ public class form extends javax.swing.JFrame {
         });
 
         jButton2.setText("Del");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Edit");
 
@@ -113,6 +132,11 @@ public class form extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tb.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tb);
         if (tb.getColumnModel().getColumnCount() > 0) {
             tb.getColumnModel().getColumn(0).setResizable(false);
@@ -123,6 +147,7 @@ public class form extends javax.swing.JFrame {
 
         jLabel3.setText("Total /Baht");
 
+        lbTotal.setEnabled(false);
         lbTotal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lbTotalActionPerformed(evt);
@@ -208,6 +233,13 @@ public class form extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (textField2.getText().isEmpty()){
+            JOptionPane.showMessageDialog(this,"Please input data","Caution",JOptionPane.ERROR_MESSAGE);
+        }
+        if(checkMenu()){
+            
+            
+        }
         Vector v  = new Vector();
         v.add(cbFoods.getSelectedItem().toString());
         v.add(textField1.getText());
@@ -218,7 +250,7 @@ public class form extends javax.swing.JFrame {
         total += money;
         
          model.addRow(v);
-         lbTotal.setText("Total: "+df.format(total)+"Baht");
+         lbTotal.setText(df.format(total)+"/"+"Baht");
           
         
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -243,6 +275,30 @@ public class form extends javax.swing.JFrame {
     private void lbTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lbTotalActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_lbTotalActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+            if(tb.isRowSelected(selected)){
+                 double moneySelected = Double.valueOf(tb.getValueAt(selected,3).toString().replace(",",""));
+            System.out.println("Show Total"+moneySelected);
+            total -= moneySelected;
+            lbTotal.setText(df.format(total) +"Baht");
+            if(total ==0){
+                    lbTotal.setText("0.00 Baht");
+            }
+            model.removeRow(selected);
+                
+            }else{
+                JOptionPane.showMessageDialog(this,"Please choose data on table ","Caution",JOptionPane.ERROR_MESSAGE);
+            }
+        
+           
+            
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void tbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbMouseClicked
+       selected = tb.getSelectedRow();
+       System.out.println("Rows" + selected);
+    }//GEN-LAST:event_tbMouseClicked
 
     /**
      * @param args the command line arguments
